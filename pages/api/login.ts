@@ -1,51 +1,58 @@
-import { UserModel } from './../../models/user';
-import { connectToDb } from './../../middlewares/dbconnection';
-import { DefaultMsgResponse } from './../../types/DefaultMsgResponse';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import CryptoJs from 'crypto-js';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { UserModel } from '../../models/User';
+import { DefaultMessageResponse } from '../../types/DefaultMessageResponse';
+import { User } from '../../types/User';
+import CryptoJS from "crypto-js";
+import jwt from 'jsonwebtoken';
+import { connectToDB } from '../../middlewares/connectToDB';
 
-type Login = {
-    login: string;
-    password: string;
-}
-
-
-const handler = async (req: NextApiRequest, res: NextApiResponse<DefaultMsgResponse>) => {
+const loginEndpoint = async function (requisicao: NextApiRequest, resposta: NextApiResponse<DefaultMessageResponse | any>) {
     try {
-        if (req.method !== "POST") {
-            return res.status(405).json({ error: "Método inválido" });
+        if (requisicao.method !== 'POST') {
+            return resposta.status(405).json({ error: 'Método informado não existe' });
         }
 
-        const { login, password } = req.body as Login;
-
-        const user = await UserModel.findOne({email:login});
-        if(!user){
-            return res.status(400).json({ error: "Usuario e senha n encontrado" });
+        const {MY_SUPER_SECRET_KEY} = process.env;
+        if(!MY_SUPER_SECRET_KEY){
+            return resposta.status(500).json({error : 'Env MY_SECRET_KEY não informada'});
         }
 
-        const { MY_SUPER_SECRET_KEY } = process.env;
-        if (!MY_SUPER_SECRET_KEY) {
-            console.log("MY_SUPER_SECRET_KEY invalida")
-            return res.status(500).json({ error: "MY_SUPER_SECRET_KEY invalida" });
+        if (!requisicao.body) {
+            return resposta.status(400).json({ error: 'Favor informar os dados para autenticação' });
         }
 
-        const bytes = CryptoJs.AES.decrypt(user.password,MY_SUPER_SECRET_KEY).toString();
-        const savedPassword = bytes.toString(CryptoJs.enc.Utf8)
+        const { login, password } = requisicao.body;
 
-        if(password !== savedPassword){
-            return res.status(400).json({ error: "Usuario e senha n encontrado" });
+        if(!login || !password){
+            return resposta.status(400).json({ error: 'Favor informar os dados para autenticação' });
         }
 
-        if (login === 'teste@teste.com' && password === 'senha@123') {
-
-            return res.status(200).json({ msg: "Usuário autenticado" });
+        const existsUserWithEmail = await UserModel.find({email: login});
+        if(!existsUserWithEmail || existsUserWithEmail.length === 0){
+            return resposta.status(400).json({ error: 'Usuário e senha não conferem' });
         }
 
-        return res.status(200).json({ error: "Usuario autenticado" });
-    } catch (ex) {
-        console.log('Ocorreu erro no login:', ex);
-        res.status(500).json({ error: "Tente novamente, erro!" });
+        const user = existsUserWithEmail[0] as User;
+        const bytes  = CryptoJS.AES.decrypt(user.password, MY_SUPER_SECRET_KEY);
+        const savedPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+        if (password === savedPassword) {
+            const token = jwt.sign({_id: user._id}, MY_SUPER_SECRET_KEY);
+
+            const result = {
+                token,
+                name: user.name,
+                email: user.email
+            }
+
+            return resposta.status(200).json(result);
+        }
+
+        return resposta.status(400).json({ error: 'Usuário e senha não conferem' });
+    } catch (e: any) {
+        console.log('Ocorreu erro ao logar usuário:', e);
+        return resposta.status(500).json({ error: 'Ocorreu erro ao logar usuário, tente novamente....' });
     }
 }
 
-export default connectToDb(handler);
+export default connectToDB(loginEndpoint);

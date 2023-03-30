@@ -35,8 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
 # .envs
 .env
 .env.local
 .env.prd
-.env.html
+.env.hml
