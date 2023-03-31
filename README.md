@@ -3,8 +3,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Getting Started
 
 First, run the development server:
-npm i
+
 ```bash
+npm i
+design figma : https://www.figma.com/file/knytjAN1Sb4DYxtMLNv8xw/FIAP?node-id=0-1
 npm run dev
 # or
 yarn dev
