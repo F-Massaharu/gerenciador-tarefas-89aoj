@@ -1,30 +1,21 @@
-/* eslint-disable @next/next/no-img-element */
+import type { NextPage } from "next";
 
-import { NextPage } from "next";
-
-type HeaderProps ={
-    setAccessToken (s:string):void
+type HeaderProps = {
+    sair(): void,
+    showModal():void
 }
-
-export const Header : NextPage<HeaderProps> = ({setAccessToken}) =>{
-    const mobile = window.innerWidth < 954;
-    
-    const userName = localStorage.getItem('name');
-    const firstName = userName?.split(' ')[1] || '';
-
-    const sair = () =>{
-        localStorage.clear();
-        setAccessToken('');
-    }
-
-    return(
+export const Header : NextPage<HeaderProps> = ({sair, showModal}) => {
+    return (
         <div className="container-header">
-            <img src="logo.svg" alt="Logo Fiap" className='logo' />
-            <button><strong>+</strong> Adicionar Tarefa</button>
-            <div>
-                <span>Olá, {firstName}</span>
-                <img src= {mobile ? "exit-mobile.svg" : "exit-desktop.svg" } alt="Sair"
-                    onClick={sair}/>
+            <img src="/logo.svg" alt="Logo Fiap" className="logo"/>
+            <button onClick={showModal}><span>+</span>Adicionar Tarefa</button>
+            <div className="mobile">
+                <span>Olá, </span>
+                <img src="/exit-mobile.svg" alt="Sair" onClick={sair}/>
+            </div>
+            <div className="desktop">
+                <span>Olá, </span>
+                <img src="/exit-desktop.svg" alt="Sair" onClick={sair}/>
             </div>
         </div>
     );

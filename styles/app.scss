@@ -1,29 +1,23 @@
 @import '~bootstrap/scss/bootstrap';
 @import './config.scss';
-@import './header.scss';
 
 @font-face {
     font-family: 'Biennale Regular';
-    font-weight: 'normal';
-    font-style: 'normal';
+    font-weight: normal;
+    font-style: normal;
     src: url('../public/fonts/BiennaleRegular.otf') format('opentype');
 }
 
-html {
+html{
     height: 100%;
 }
 
-body {
+body{
     height: 100%;
-    font-family : 'Biennale Regular';
-    font-size: 14px;
-
-    @media screen and (min-width: $mediaQueryDesktop){
-        font-size: 16px;
-    }
+    font-family: 'Biennale Regular';
 }
 
-#__next {
+#__next{
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -35,23 +29,24 @@ body {
     padding: 0;
 }
 
-input, select{
+input, select {
     font-style: normal;
     font-weight: normal;
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: 0.01em;
     color: $primaryColor;
     min-width: 150px;
     background-color: transparent;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
     border-bottom: 1px solid $mediumGreyColor;
-    outline: none;
 
     &:focus{
         border-bottom-color: $primaryColor;
     }
+
+    outline: none;
 
     &::placeholder{
         color: $mediumGreyColor;
@@ -67,32 +62,29 @@ input, select{
     }
 }
 
-button {
-    border-radius: 12px;
-    height: 56px;
-    background-color: $mediumGreyColor;
-    color: white;
-    outline: none;
-    border: none;
-    padding: 5px 10px;
-
-    &:hover {
-        background-color: $primaryColor;
-    }
-}
-
-@media screen and (min-width: $mediaQueryDesktop){
-    input, select{
-        font-size: 16px;
+@media screen and (min-width: $mediaQueryDesktop) {
+    input, select {
         border-radius: 8px;
-        border: 1px solid;
+        border-width: 1px;
+        padding: 5px;
+        outline: none;
+    }
+
+    select{
+        min-width: 125px;
     }
 }
 
-.error {
+.error{
     text-align: center;
     color: $errorColor;
     font-weight: bold;
 }
 
 @import './login.scss';
+@import './header.scss';
+@import './footer.scss';
+@import './filter.scss';
+@import './list.scss';
+@import './item.scss';
+@import './modal.scss';
